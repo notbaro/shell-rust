@@ -1,5 +1,7 @@
 use std::{
+    env,
     io::{self, Write},
+    path::Path,
     process::exit,
 };
 
@@ -27,7 +29,23 @@ fn main() {
                 if builtins.contains(&args[1]) {
                     println!("{} is a shell builtin", args[1]);
                 } else {
-                    println!("{} not found", args[1]);
+                    let path = env::var("PATH").unwrap();
+                    let paths: Vec<&str> = path.split(':').collect();
+                    let mut found = false;
+
+                    for p in paths {
+                        let mut full_path = Path::new(p).join(args[1]);
+                        full_path.set_extension("");
+                        if full_path.exists() {
+                            println!("{} is {}", args[1], full_path.display());
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if !found {
+                        println!("{}: not found", args[1]);
+                    }
                 }
             }
             _ => println!("{}: command not found", input),
