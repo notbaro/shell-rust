@@ -7,6 +7,7 @@ pub enum Command<'a> {
     Exit(i32),
     Echo(Vec<&'a str>),
     Type(&'a str),
+    Pwd(),
     NotBuiltin(&'a str, Vec<&'a str>),
 }
 impl<'a> Command<'a> {
@@ -42,6 +43,10 @@ impl<'a> Command<'a> {
                     println!("{cmd}: command not found")
                 }
             }
+            Command::Pwd() => {
+                let current_dir = env::current_dir().unwrap();
+                println!("{}", current_dir.display());
+            }
         }
     }
 }
@@ -52,6 +57,7 @@ pub fn into_command(raw_args: &str) -> Command {
         "exit" => Command::Exit(parsed_args[1].parse::<i32>().unwrap()),
         "echo" => Command::Echo(parsed_args),
         "type" => Command::Type(parsed_args[1]),
+        "pwd" => Command::Pwd(),
         _ => Command::NotBuiltin(cmd, parsed_args[1..].to_vec()),
     }
 }
