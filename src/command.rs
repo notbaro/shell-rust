@@ -7,6 +7,7 @@ pub enum Command<'a> {
     Exit(i32),
     Echo(Vec<&'a str>),
     Type(&'a str),
+    Cd(&'a str),
     Pwd(),
     NotBuiltin(&'a str, Vec<&'a str>),
 }
@@ -46,6 +47,12 @@ impl<'a> Command<'a> {
             Command::Pwd() => {
                 let current_dir = env::current_dir().unwrap();
                 println!("{}", current_dir.display());
+            },
+            Command::Cd(dir) => {
+                let path = Path::new(dir);
+                if let Err(_) = env::set_current_dir(&path) {
+                    eprintln!("{}: No such file or directory", dir);
+                }
             }
         }
     }
@@ -58,6 +65,7 @@ pub fn into_command(raw_args: &str) -> Command {
         "echo" => Command::Echo(parsed_args),
         "type" => Command::Type(parsed_args[1]),
         "pwd" => Command::Pwd(),
+        "cd" => Command::Cd(parsed_args.get(1).unwrap_or(&"")),
         _ => Command::NotBuiltin(cmd, parsed_args[1..].to_vec()),
     }
 }
