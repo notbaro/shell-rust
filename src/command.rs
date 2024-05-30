@@ -49,6 +49,14 @@ impl<'a> Command<'a> {
                 println!("{}", current_dir.display());
             },
             Command::Cd(dir) => {
+                if dir == "~" {
+                    let home = env::var("HOME").unwrap();
+                    let path = Path::new(&home);
+                    if let Err(_) = env::set_current_dir(&path) {
+                        eprintln!("{}: No such file or directory", dir);
+                    }
+                    return;
+                }
                 let path = Path::new(dir);
                 if let Err(_) = env::set_current_dir(&path) {
                     eprintln!("{}: No such file or directory", dir);
