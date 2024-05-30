@@ -9,6 +9,7 @@ fn main() {
     // Uncomment this block to pass the first stage
 
     let stdin = io::stdin();
+    let builtins = ["exit", "echo", "type"];
     loop {
         print!("$ ");
         io::stdout().flush().unwrap();
@@ -22,6 +23,13 @@ fn main() {
         match args[0] {
             "exit" => exit(args[1].parse::<i32>().unwrap()),
             "echo" => println!("{}", args[1..].join(" ")),
+            "type" => {
+                if builtins.contains(&args[1]) {
+                    println!("{} is a shell builtin", args[1]);
+                } else {
+                    println!("{} not found", args[1]);
+                }
+            }
             _ => println!("{}: command not found", input),
         }
     }
