@@ -4,14 +4,15 @@ fn main() {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
 
     // Uncomment this block to pass the first stage
-    print!("$ ");
-    io::stdout().flush().unwrap();
 
-    // Wait for user input
     let stdin = io::stdin();
-    let mut input = String::new();
-    stdin.read_line(&mut input).unwrap();
-    input = String::from(input.trim());
+    loop {
+        print!("$ ");
+        io::stdout().flush().unwrap();
+        // Wait for user input
+        let mut input = String::new();
+        stdin.read_line(&mut input).unwrap();
 
-    println!("{input}: command not found")
+        println!("{}: command not found", input.trim())
+    }
 }
